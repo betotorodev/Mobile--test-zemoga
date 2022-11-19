@@ -8,19 +8,24 @@
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
+  var body: some View {
+    NavigationView {
+      List {
+        ForEach(0..<5, id: \.self) { post in
+          NavigationLink {
+            Text("\(post + 1)")
+          } label: {
+            Text("post \(post + 1)")
+          }
         }
-        .padding()
+      }
+      .navigationTitle("Posts")
     }
+  }
 }
 
 struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
+  static var previews: some View {
+    ContentView()
+  }
 }
