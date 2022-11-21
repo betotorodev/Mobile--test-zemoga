@@ -12,6 +12,8 @@ struct Response: Codable {
   var id: Int
   var title: String
   var body: String
+  
+  static let example = Response(userId: 1, id: 1, title: "holi", body: "texto prueba")
 }
 
 struct ContentView: View {
@@ -38,9 +40,13 @@ struct ContentView: View {
       List {
         ForEach(results, id: \.id) { post in
           NavigationLink {
-            Text("\(post.id)")
+            PostDetail(post: post)
           } label: {
-            Text("post \(post.id)")
+            HStack {
+              Image(systemName: "star")
+                .font(.callout)
+              Text("\(post.title)")
+            }
           }
         }
       }
