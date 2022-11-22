@@ -7,18 +7,10 @@
 
 import SwiftUI
 
-struct Response: Codable {
-  var userId: Int
-  var id: Int
-  var title: String
-  var body: String
-  
-  static let example = Response(userId: 1, id: 1, title: "holi", body: "texto prueba")
-}
-
 struct ContentView: View {
   
-  @State private var results = [Response]()
+  @State private var posts = [Posts]()
+  @StateObject var favorites = Favorites()
   
   func loadData() async {
     guard let url = URL(string: "https://jsonplaceholder.typicode.com/posts") else {
@@ -27,8 +19,8 @@ struct ContentView: View {
     }
     do {
       let (data, _) = try await URLSession.shared.data(from: url)
-      if let decodedResponse = try? JSONDecoder().decode([Response].self, from: data) {
-        results = decodedResponse
+      if let decodedResponse = try? JSONDecoder().decode([Posts].self, from: data) {
+        posts = decodedResponse
       }
     } catch {
       print("Invalid data")
@@ -38,13 +30,20 @@ struct ContentView: View {
   var body: some View {
     NavigationView {
       List {
-        ForEach(results, id: \.id) { post in
+        ForEach(posts, id: \.id) { post in
           NavigationLink {
             PostDetail(post: post)
           } label: {
             HStack {
-              Image(systemName: "star")
+              Image(systemName: "\(favorites.contains(post) ? "star.fill": "star")")
                 .font(.callout)
+                .onTapGesture {
+                  if favorites.contains(post) {
+                    favorites.remove(post)
+                  } else {
+                    favorites.add(post)
+                  }
+                }
               Text("\(post.title)")
             }
           }

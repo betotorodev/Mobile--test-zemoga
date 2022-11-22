@@ -7,23 +7,8 @@
 
 import SwiftUI
 
-struct User: Codable {
-  var name: String
-  var username: String
-  var email: String
-  var website: String
-  
-  static let example = User(name: "Beto", username: "Beto Toro", email: "betotoro0902@gmail.com", website: "betotoro.info")
-}
-
-struct Comments: Codable {
-  var id: Int
-  var name: String
-  var body: String
-}
-
 struct PostDetail: View {
-  let post: Response
+  let post: Posts
   @State private var userInfo = User.example
   @State private var comments = [Comments]()
   
@@ -81,6 +66,6 @@ struct PostDetail: View {
 
 struct PostDetail_Previews: PreviewProvider {
   static var previews: some View {
-    PostDetail(post: Response.example)
+    PostDetail(post: Posts.example)
   }
 }
