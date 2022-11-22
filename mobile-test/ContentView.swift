@@ -27,7 +27,7 @@ struct ContentView: View {
     }
   }
   
-  func removePost(at offsets: IndexSet) { 
+  func removePost(at offsets: IndexSet) {
     posts.remove(atOffsets: offsets)
   }
   

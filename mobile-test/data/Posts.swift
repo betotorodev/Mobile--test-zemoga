@@ -7,11 +7,12 @@
 
 import Foundation
 
-struct Posts: Codable {
+struct Posts: Codable, Hashable {
   var userId: Int
   var id: Int
   var title: String
   var body: String
+  static let saveKey = "Favorites"
   
   static let example = Posts(userId: 1, id: 1, title: "holi", body: "texto prueba")
 }
