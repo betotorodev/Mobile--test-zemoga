@@ -10,31 +10,26 @@ import SwiftUI
 struct PostDetail: View {
   let post: Posts
   @State private var userInfo = User.example
-  @State private var comments = [Comments]()
+  @State private var comments = Comments.example
   
   func loadData() async {
-    guard let url = URL(string: "https://jsonplaceholder.typicode.com/users/\(post.userId)") else {
+    guard let urlUsers = URL(string: "https://jsonplaceholder.typicode.com/users/\(post.userId)") else {
       print("Invalid URL")
       return
     }
+    guard let urlComments = URL(string: "https://jsonplaceholder.typicode.com/posts/\(post.id)/comments") else {
+      print("Invalid URL")
+      return
+    }
+
     do {
-      let (data, _) = try await URLSession.shared.data(from: url)
-      if let decodedResponse = try? JSONDecoder().decode(User.self, from: data) {
+      let (dataUser, _) = try await URLSession.shared.data(from: urlUsers)
+      if let decodedResponse = try? JSONDecoder().decode(User.self, from: dataUser) {
         userInfo = decodedResponse
       }
-    } catch {
-      print("Invalid data")
-    }
-  }
-  
-  func loadComments() async {
-    guard let url = URL(string: "https://jsonplaceholder.typicode.com/posts/\(post.id)/comments") else {
-      print("Invalid URL")
-      return
-    }
-    do {
-      let (data, _) = try await URLSession.shared.data(from: url)
-      if let decodedResponse = try? JSONDecoder().decode([Comments].self, from: data) {
+      
+      let (dataComments, _) = try await URLSession.shared.data(from: urlComments)
+      if let decodedResponse = try? JSONDecoder().decode([Comments].self, from: dataComments) {
         comments = decodedResponse
       }
     } catch {
@@ -43,23 +38,57 @@ struct PostDetail: View {
   }
   
   var body: some View {
-    VStack(alignment: .leading) {
-      Text("\(post.title)")
-      Text("\(post.body)")
-      Text("\(userInfo.name)")
-      
+    VStack {
       List {
-        ForEach(comments, id: \.id) { comment in
-          Text("holi \(post.id) \(comment.name)")
+        Section("Post") {
+          VStack(alignment: .leading) {
+            Text("\(post.title)")
+              .font(.title)
+              .bold()
+              .padding(.bottom, 2)
+            Text("\(post.body)")
+              .foregroundColor(.gray)
+          }
+          HStack {
+            VStack(alignment: .leading) {
+              Text("Written by: \(userInfo.name)")
+                .padding(.bottom, 2)
+              Group {
+                Text("Bitter: @\(userInfo.username)")
+                Text("Email: \(userInfo.email)")
+                Text("Website: \(userInfo.website)")
+              }
+              .font(.caption)
+              .foregroundColor(.secondary)
+            }
+            Spacer()
+          }
+          .frame(maxWidth: .infinity)
+        }
+        
+        Section("Comments") {
+          ForEach(comments, id: \.id) { comment in
+            VStack(alignment: .leading) {
+              Text("\(comment.name)")
+                .font(.callout)
+                .bold()
+                .foregroundColor(.secondary)
+              Text("\(comment.email)")
+                .font(.caption)
+                .bold()
+                .foregroundColor(.secondary)
+                .padding(.bottom, 2)
+              Text("\(comment.body)")
+            }
+          }
         }
       }
     }
     .frame(maxWidth: .infinity, maxHeight: .infinity)
-    .navigationTitle("\(post.title)")
+    .navigationTitle("\(userInfo.name)")
     .navigationBarTitleDisplayMode(.inline)
     .task {
       await loadData()
-      await loadComments()
     }
   }
 }

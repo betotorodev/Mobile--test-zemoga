@@ -13,5 +13,5 @@ struct User: Codable {
   var email: String
   var website: String
   
-  static let example = User(name: "Beto", username: "Beto Toro", email: "betotoro0902@gmail.com", website: "betotoro.info")
+  static let example = User(name: "User", username: "BetoToro", email: "betotoro0902@gmail.com", website: "betotoro.info")
 }

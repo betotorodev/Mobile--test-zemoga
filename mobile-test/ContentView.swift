@@ -27,6 +27,10 @@ struct ContentView: View {
     }
   }
   
+  func removePost(at offsets: IndexSet) { 
+    posts.remove(atOffsets: offsets)
+  }
+  
   var body: some View {
     NavigationView {
       List {
@@ -36,7 +40,7 @@ struct ContentView: View {
           } label: {
             HStack {
               Image(systemName: "\(favorites.contains(post) ? "star.fill": "star")")
-                .font(.callout)
+                .font(.title3)
                 .onTapGesture {
                   if favorites.contains(post) {
                     favorites.remove(post)
@@ -44,12 +48,24 @@ struct ContentView: View {
                     favorites.add(post)
                   }
                 }
-              Text("\(post.title)")
+                .padding(5)
+              VStack(alignment: .leading) {
+                Text("title")
+                  .font(.caption)
+                  .foregroundColor(.secondary)
+                  .padding(.bottom, 1)
+                Text("\(post.title)")
+                  .font(.subheadline)
+              }
             }
           }
         }
+        .onDelete(perform: removePost)
       }
       .navigationTitle("Posts")
+      .toolbar {
+        EditButton()
+      }
       .task {
         await loadData()
       }
